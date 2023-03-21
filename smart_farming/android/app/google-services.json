@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "134047420123",
+    "firebase_url": "https://smart-farming-42aea-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "smart-farming-42aea",
+    "storage_bucket": "smart-farming-42aea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134047420123:android:615e584d648249473386fe",
+        "android_client_info": {
+          "package_name": "com.autobonics.smart_farming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134047420123-admmk5fl52j4g8ibifn5mlu6jeq523b0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWxg2bt9nBy0cTnw-Azdvg-kJ-ZeWBGBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134047420123-admmk5fl52j4g8ibifn5mlu6jeq523b0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
