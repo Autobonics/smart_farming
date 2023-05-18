@@ -1,10 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:smart_farming/ui/smart_widgets/online_status.dart';
-import 'package:stacked/stacked.dart';
-import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:lottie/lottie.dart';
+import 'package:stacked/stacked.dart';
 
 import 'home_viewmodel.dart';
 
@@ -14,171 +10,107 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
-      onViewModelReady: (model) => model.onModelReady(),
+      // onViewModelReady: (model) => model.onModelReady(),
       builder: (context, model, child) {
         // print(model.node?.lastSeen);
         return Scaffold(
-            appBar: AppBar(
-              title: const Text('Farm monitor'),
-              centerTitle: true,
-              actions: [IsOnlineWidget()],
+          appBar: AppBar(
+            title: const Text('Smart farming'),
+            actions: [
+              if (model.user != null)
+                IconButton(
+                  onPressed: model.logout,
+                  icon: const Icon(Icons.logout),
+                )
+            ],
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      Option(
+                          name: 'Farm control',
+                          onTap: model.openInControlView,
+                          file: 'assets/farm.json'),
+                      Option(
+                          name: 'Soil types',
+                          onTap: model.openAutomaticView,
+                          file: 'assets/soil.json'),
+                      // Option(
+                      //     name: 'Object Train',
+                      //     onTap: model.openTrainView,
+                      //     file: 'assets/lottie/face.json'),
+                      // Option(
+                      //     name: 'FaceTest',
+                      //     onTap: model.openFaceTestView,
+                      //     file: 'assets/lottie/face.json'),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            body: model.data != null
-                ? const _HomeBody()
-                : Center(child: Text("No data")));
+          ),
+        );
       },
       viewModelBuilder: () => HomeViewModel(),
     );
   }
 }
 
-class _HomeBody extends ViewModelWidget<HomeViewModel> {
-  const _HomeBody({Key? key}) : super(key: key, reactive: true);
-
-  @override
-  Widget build(BuildContext context, HomeViewModel model) {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.count(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            children: [
-              FarmView(
-                value: model.newValue(model.data!.s1),
-                text: "Farm 1",
-                led: model.leds[0],
-                onTap: () {
-                  model.ledOnOff(0);
-                },
-              ),
-              FarmView(
-                value: model.newValue(model.data!.s2),
-                text: "Farm 2",
-                led: model.leds[1],
-                onTap: () {
-                  model.ledOnOff(1);
-                },
-              ),
-              FarmView(
-                value: model.newValue(model.data!.s3),
-                text: "Farm 3",
-                led: model.leds[2],
-                onTap: () {
-                  model.ledOnOff(2);
-                },
-              ),
-              FarmView(
-                value: model.newValue(model.data!.s4),
-                text: "Farm 4",
-                led: model.leds[3],
-                onTap: () {
-                  model.ledOnOff(3);
-                },
-              ),
-              FarmView(
-                value: model.newValue(model.data!.s5),
-                text: "Farm 5",
-                led: model.leds[4],
-                onTap: () {
-                  model.ledOnOff(4);
-                },
-              ),
-            ],
-          ),
-        ),
-        // else if (model.data!.s1 < 30)
-        //   Positioned.fill(
-        //       child: LottieShow(
-        //     link: 'https://assets3.lottiefiles.com/packages/lf20_qf6zku4z.json',
-        //     text: 'Connect GSR cables',
-        //   ))
-      ],
-    );
-  }
-}
-
-class FarmView extends StatelessWidget {
+class Option extends StatelessWidget {
+  final String name;
   final VoidCallback onTap;
-  final double value;
-  final String text;
-  final int led;
-  const FarmView({
-    Key? key,
-    required this.value,
-    required this.text,
-    required this.onTap,
-    required this.led,
-  }) : super(key: key);
+  final String file;
+  const Option(
+      {Key? key, required this.name, required this.onTap, required this.file})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.green.withOpacity(0.2),
-      ),
+    return AspectRatio(
+      aspectRatio: 2 / 1.5,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: InkWell(
           onTap: onTap,
-          child: Stack(
-            children: [
-              LiquidCircularProgressIndicator(
-                value: value,
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
-                backgroundColor: Colors
-                    .white, // Defaults to the current Theme's backgroundColor.
-                // borderColor: Colors.black,
-                // borderWidth: 1.0,
-                center: value == -1
-                    ? Text("Error")
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("${(value * 100).round()}%"),
-                          Text(text),
-                        ],
-                      ),
-              ),
-              if (led == 1) Icon(Icons.circle, color: Colors.red),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LottieShow extends StatelessWidget {
-  final String link;
-  final String text;
-  const LottieShow({super.key, required this.link, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-      child: Center(
-        child: Card(
-          elevation: 10,
-          color: Colors.black.withOpacity(0.5),
-          child: Container(
-            // height: 250,
-            // width: 200,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            margin: const EdgeInsets.all(0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(
                 children: [
-                  Lottie.network(link),
-                  SizedBox(height: 20),
-                  Text(
-                    text,
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  ),
+                  Positioned(
+                      top: 0,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 40.0),
+                        child: Lottie.asset(file),
+                      )),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            name,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
